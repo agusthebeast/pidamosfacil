@@ -79,26 +79,7 @@ function toggleFAQ(index) {
 }
 
 function toggleMenu() {
-    const navLinks = document.querySelector('.nav-links'); // Selecciona el menú
-    const hamburger = document.querySelector('.hamburger'); // Selecciona el botón
-
-    if (navLinks) {
-        navLinks.classList.toggle('active'); // Activa/desactiva la clase "active"
-        hamburger.classList.toggle('is-active'); // Cambia el estado visual del botón
-    } else {
-        console.error('No se encontró el elemento con la clase "nav-links".');
-    }
+    const navMenu = document.querySelector('.main-nav ul');
+    navMenu.classList.toggle('active');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-
-    hamburger.addEventListener('click', () => {
-        if (navLinks) {
-            navLinks.classList.toggle('active');
-        } else {
-            console.error('No se encontró el elemento con la clase "nav-links".');
-        }
-    });
-});
