@@ -836,3 +836,43 @@ footer .create-page button:hover {
     transform: scale(1.2);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* Estilos responsivos para la barra de navegación */
+@media (max-width: 768px) {
+    .main-header {
+        flex-wrap: wrap; /* Permite que los elementos se ajusten en líneas */
+        justify-content: center; /* Centra el contenido */
+        padding: 10px; /* Reduce el espacio en pantallas pequeñas */
+    }
+
+    .logo-container {
+        flex-basis: 100%; /* Ocupa toda la línea */
+        text-align: center; /* Centra el logo */
+        margin-bottom: 10px; /* Añade espacio entre el logo y la barra */
+    }
+
+    .main-nav ul {
+        display: flex;
+        flex-direction: column; /* Cambia a una lista vertical */
+        align-items: center; /* Centra los enlaces */
+        gap: 10px; /* Añade espacio entre los elementos */
+        padding: 0;
+        margin: 0;
+    }
+
+    .main-nav a {
+        font-size: 1.2em; /* Ajusta el tamaño del texto */
+        padding: 10px; /* Añade espacio interno */
+        width: 100%; /* Hace que los enlaces ocupen toda la línea */
+        text-align: center; /* Centra el texto */
+        background: var(--primary-color); /* Color de fondo en móviles */
+        color: white; /* Texto blanco */
+        border-radius: 5px; /* Bordes redondeados */
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .main-nav a:hover {
+        background: var(--secondary-color); /* Color de fondo al pasar el cursor */
+    }
+}
