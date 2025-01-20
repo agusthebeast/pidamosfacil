@@ -862,15 +862,14 @@ footer .create-page button:hover {
     }
 
     .menu-toggle {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 1.5em;
-        cursor: pointer;
-        color: var(--primary-color);
-        padding: 0;
-        margin: 0;
-        z-index: 2000; /* Para asegurarte de que esté sobre otros elementos */
+        display: none; /* Ocultar el ícono por defecto */
     }
+    
+    @media (max-width: 768px) {
+        .menu-toggle {
+            display: block; /* Mostrar el ícono en pantallas más pequeñas */
+        }
+    }
+    
     
 }
