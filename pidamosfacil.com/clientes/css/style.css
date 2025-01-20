@@ -1,0 +1,641 @@
+        :root {
+            --primary-color: #4caf50; /* Color dinámico */
+            --secondary-color: #333; /* Color dinámico */
+        }
+    
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+    
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+    
+        header h1 {
+            font-size: 1.5em;
+            flex: 1;
+        }
+    
+        header input {
+            flex: 1;
+            margin: 0 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+        }
+    
+        nav button {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+    
+        nav button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+    
+        .category {
+    position: relative;
+    height: 200px; /* Altura del banner */
+    margin: 20px 0;
+    padding: 0 20px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.category-content {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Más espacio entre el ícono y el nombre */
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Contraste adicional */
+}
+
+.category-image {
+    width: 70px; /* Tamaño del ícono aumentado */
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid white; /* Bordes más visibles */
+}
+
+.category-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category span {
+    font-size: 1.5em; /* Tamaño del texto aumentado */
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+
+/* Diseño de cada subcategoría */
+.subcategory {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.subcategory:hover {
+    transform: scale(1.02);
+    background-color: #f9f9f9;
+}
+
+.subcategory:hover {
+    transform: scale(1.02);
+    background-color: #f1f1f1;
+}
+    
+/* Contenedor de productos en lista */
+.product-grid {
+    display: flex;
+    flex-direction: column; /* Elementos en columna */
+    gap: 15px; /* Espacio entre las cajas */
+}
+
+/* Caja del producto en lista */
+.product {
+    display: flex; /* Alinear elementos en fila */
+    flex-direction: row; /* Imagen y detalles en la misma fila */
+    align-items: center;
+    gap: 15px; /* Espacio entre la imagen y los detalles */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.product:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagen del producto en lista */
+.product img {
+    width: 80px; /* Tamaño fijo para las imágenes */
+    height: 80px;
+    object-fit: contain; /* Ajusta la imagen sin recortarla */
+    border-radius: 8px; /* Bordes redondeados */
+    background-color: #f0f0f0; /* Fondo gris claro para imágenes transparentes */
+}
+
+/* Detalles del producto en lista */
+.product-details {
+    display: flex;
+    flex-direction: column; /* Elementos en columna */
+    flex-grow: 1; /* Ocupa el espacio restante */
+    gap: 5px; /* Espacio entre los detalles */
+}
+
+.product-details .product-name {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.product-details .product-description {
+    font-size: 0.9em;
+    color: #555;
+    line-height: 1.4;
+}
+
+.product-details .product-price {
+    font-size: 1em;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* Contenedor para cantidad e input */
+.product-details .product-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre texto e input */
+}
+
+.product-quantity input {
+    width: 50px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Botón para comprar o agregar al carrito */
+.product-details button {
+    align-self: flex-start; /* Alinear a la izquierda */
+    padding: 8px 15px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-details button:hover {
+    background-color: #3a9e40;
+}
+    
+        .product input {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+    
+        #cart-modal, #form-popup {
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 80%;
+        }
+    
+        #cart-modal h2, #form-popup h3 {
+            margin-top: 0;
+            font-size: 1.4em;
+            color: var(--primary-color);
+        }
+    
+        #cart-container p {
+            margin: 10px 0;
+            font-size: 1em;
+        }
+    
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+    
+        button:hover {
+            background-color: #3a9e40;
+        }
+    
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9em;
+        }
+    
+        footer a {
+            color: yellow;
+            text-decoration: none;
+        }
+    
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+            }
+    
+            header h1 {
+                font-size: 1.2em;
+                text-align: center;
+            }
+    
+            header input {
+                margin: 10px 0;
+            }
+    
+            .product {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+    
+            .product img {
+                margin-bottom: 10px;
+            }
+        }
+
+        .banner {
+    width: 100%;
+    max-height: 300px; /* Ajusta según la altura de la imagen */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo y nombre en el header */
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.site-name {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Botón de volver */
+.back-button-container {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.back-button {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
+
+/* Grid de subcategorías */
+.subcategory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adaptable a diferentes tamaños */
+    gap: 20px;
+}
+
+/* Subcategoría con banner */
+.subcategory {
+    position: relative;
+    height: 100px; /* Altura del botón */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.subcategory:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Para el texto dentro del banner */
+.subcategory span {
+    position: relative;
+    z-index: 1; /* Asegura que el texto esté encima del fondo */
+}
+
+/* Fondo degradado para mejor legibilidad del texto */
+.subcategory::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)); /* Fondo degradado */
+    border-radius: 8px;
+    z-index: 0; /* Debajo del texto */
+}
+
+
+/* Botón de "Volver" */
+.back-button {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
+
+/* Contenedor de la cuadrícula de productos */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.banner img {
+    width: 100%; /* Asegura que se adapte al ancho */
+    object-fit: cover; /* Recorta la imagen si es necesario para llenarlo */
+}
+
+#whatsapp-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #25d366;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+#whatsapp-icon img {
+    width: 30px;
+    height: 30px;
+}
+
+#whatsapp-icon:hover {
+    transform: scale(1.1);
+}
+
+.back-button {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #ddd;
+}
+
+/* Ajustes de diseño responsivo */
+@media (max-width: 768px) {
+    header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 1.2em;
+        flex: 1 100%; /* Ocupa todo el ancho */
+        margin-bottom: 10px;
+    }
+
+    header input {
+        flex: 1 100%; /* Ocupa todo el ancho */
+        margin: 10px 0;
+    }
+
+    nav button {
+        flex: 1 100%;
+        padding: 8px 10px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .category {
+        height: 150px; /* Reducir altura del banner */
+    }
+
+    .category-content {
+        bottom: 10px;
+        left: 10px;
+        gap: 10px; /* Menos espacio entre ícono y texto */
+    }
+
+    .category-image {
+        width: 50px; /* Tamaño reducido */
+        height: 50px;
+    }
+
+    .category span {
+        font-size: 1.2em; /* Tamaño de texto reducido */
+    }
+
+    .subcategory-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Más compacto */
+        gap: 15px; /* Reducir espacio entre subcategorías */
+    }
+
+    .subcategory {
+        height: 80px; /* Reducir altura */
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr; /* Una columna para pantallas pequeñas */
+    }
+
+    .product {
+        flex-direction: column; /* Colocar imagen y texto en columna */
+        align-items: center; /* Centrar contenido */
+        text-align: center;
+    }
+
+    .product img {
+        width: 100px; /* Reducir tamaño de la imagen */
+        height: 100px;
+    }
+
+    .product-details {
+        gap: 10px;
+    }
+
+    .product-details .product-name {
+        font-size: 1em; /* Tamaño reducido */
+    }
+
+    .banner {
+        max-height: 200px; /* Reducir altura del banner */
+    }
+
+    footer {
+        flex-direction: column; /* Elementos en columna */
+        text-align: center;
+        padding: 15px;
+    }
+
+    footer a {
+        margin: 5px 0;
+    }
+
+    #whatsapp-icon {
+        width: 50px; /* Reducir tamaño del ícono */
+        height: 50px;
+    }
+
+    #whatsapp-icon img {
+        width: 25px; /* Tamaño del ícono interno */
+        height: 25px;
+    }
+
+    .back-button {
+        font-size: 0.9em; /* Tamaño reducido */
+        padding: 8px;
+    }
+}
+
+/* Ajustes adicionales para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .category {
+        height: 120px; /* Más compacto */
+    }
+
+    .category-content {
+        gap: 5px;
+    }
+
+    .category span {
+        font-size: 1em;
+    }
+
+    .subcategory {
+        height: 70px;
+        font-size: 0.9em;
+    }
+
+    .product img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .product-details .product-name {
+        font-size: 0.9em;
+    }
+}
