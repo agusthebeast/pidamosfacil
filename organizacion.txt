@@ -1,0 +1,13 @@
+E:\
+└── pidofacil\
+    ├── index.html           # Página principal de Pidofacil
+    ├── clientes\            # Carpeta para las páginas personalizadas
+    │   ├── nombredelnegocio.html #Pagina de tienda personalizada (tienda1)
+    │   ├── img\   #carpeta con imagenes utilizadas en  la tienda personalizada
+    │   │   ├── banner.gif # Banner
+    │   │   ├── whatsapp-icon.png # Icono de WhatsApp
+    │   ├── scripts\   
+    │   │   ├── script.js # Script de Tienda1           
+    ├── css\                 # (Sin nada dentro) Carpeta para estilos adicionales
+    ├── js\                  # (Sin nada dentro) Carpeta para scripts adicionales
+    └── assets\              # (Sin nada dentro) Carpeta para imágenes u otros recursos
