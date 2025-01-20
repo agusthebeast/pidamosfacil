@@ -862,11 +862,15 @@ footer .create-page button:hover {
     }
 
     .menu-toggle {
-        display: block; /* Muestra el ícono del menú */
+        display: block;
         background: none;
         border: none;
         font-size: 1.5em;
         cursor: pointer;
         color: var(--primary-color);
+        padding: 0;
+        margin: 0;
+        z-index: 2000; /* Para asegurarte de que esté sobre otros elementos */
     }
+    
 }
