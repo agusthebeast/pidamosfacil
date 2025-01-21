@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyL Electronica</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <!-- Favicon para navegadores modernos -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+    <!-- Favicon para navegadores antiguos -->
+    <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
+    <!-- Apple Touch Icon (para iOS y Safari) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+    <!-- Manifest (opcional para aplicaciones web progresivas) -->
+    <link rel="manifest" href="./img/manifest.json">
+    <!-- Archivo CSS -->
+    <link rel="preload" href="./css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="./css/style.css"></noscript>
+</head>
+<body>
+    <header>
+        <h1>Tienda de [Nombre del Negocio]</h1>
+        <input type="text" id="search-bar" placeholder="Buscar productos..." oninput="filterProducts()">
+        <nav>
+            <button onclick="toggleCart()">Carrito</button>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <img src="img/banner.gif" alt="Banner del Negocio">
+    </div>
+    
+    <div class="container" id="category-container">
+        <!-- Botón de "Volver" -->
+        <div id="search-back-button" class="back-button" onclick="clearSearch()">← Volver</div>
+        <!-- Aquí se renderizan los productos -->
+    </div>    
+
+    <div id="cart-modal">
+        <h2>Carrito</h2>
+        <div id="cart-container">
+            <p>El carrito está vacío.</p>
+        </div>
+        <button onclick="openForm()">Enviar Pedido</button>
+        <button onclick="toggleCart()">Cerrar</button>
+    </div>
+
+    <div id="form-popup">
+        <h3>Datos del Cliente</h3>
+        <form onsubmit="submitOrder(event)">
+            <label for="name">Nombre y Apellido:</label>
+            <input type="text" id="name" required>
+            <label for="cuit">CUIT/CUIL:</label>
+            <input type="text" id="cuit" required>
+            <label for="address">Dirección:</label>
+            <input type="text" id="address" required>
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" required>
+            <button type="submit">Enviar</button>
+            <button type="button" onclick="closeForm()">Cancelar</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>Síguenos en Instagram: <a href="#" id="instagram-link" target="_blank">@instagram</a></p>
+    </footer>
+
+    <a href="https://wa.me/5491138437425" target="_blank" id="whatsapp-icon">
+        <img src="img/whatsapp-icon.png" alt="WhatsApp">
+    </a>
+    
+    <script src="scripts/script.js"></script>
+</body>
+</html>
