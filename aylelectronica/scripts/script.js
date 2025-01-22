@@ -273,33 +273,6 @@ function generateUniqueID() {
     return `PF-${timestamp}`; // Prefijo para identificar el sistema
 }
 
-function submitOrder() {
-    const id = generateUniqueID(); // Genera un ID único
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const items = JSON.stringify(cart); // Carrito en formato JSON
-
-    // Datos para enviar a Google Sheets
-    const orderData = {
-        id: id,
-        nombre: name,
-        correo: email,
-        pedido: items
-    };
-
-    fetch("https://script.google.com/macros/s/AKfycbw8IBRIJTFhb5kdUQ7Dd3w834rO6T7uuZovh1hRsLpnLWTqJ5oGj3hsydiNye1fNrih/exec", {
-        method: "POST",
-        body: JSON.stringify(orderData),
-        headers: { "Content-Type": "application/json" }
-    })
-    .then(response => response.text())
-    .then(result => {
-        alert("Pedido enviado correctamente. ID: " + id);
-        window.open(`https://wa.me/5491138437425?text=Hola%20quería%20consultar%20sobre%20mi%20pedido.%20ID:%20${id}`, "_blank");
-    })
-    .catch(error => console.error("Error:", error));
-}
-
 function sendOrderToGoogleSheet(orderDetails) {
     const scriptURL = "https://script.google.com/macros/s/AKfycbzyz_idtnfG3UooISzUeeZ19RXHQetVHxTwWPIZ5Tr887gbtcBc80Zt8UnSQxnqoINk/exec";
 
@@ -342,13 +315,13 @@ document.querySelector("#enviarPedido").addEventListener("click", () => {
 });
 
 function submitOrder(event) {
-    event.preventDefault(); // Evitar recargar la página
+    event.preventDefault(); // Evita recargar la página al enviar
 
     const scriptURL = "https://script.google.com/macros/s/AKfycbw8IBRIJTFhb5kdUQ7Dd3w834rO6T7uuZovh1hRsLpnLWTqJ5oGj3hsydiNye1fNrih/exec";
 
     // Recolectar datos del formulario
     const orderDetails = {
-        id: Date.now().toString(), // Generar un ID único
+        id: Date.now().toString(), // Generar ID único basado en el tiempo
         name: document.getElementById("name").value,
         cuit: document.getElementById("cuit").value,
         address: document.getElementById("address").value,
@@ -356,7 +329,7 @@ function submitOrder(event) {
         fecha: new Date().toISOString()
     };
 
-    // Mostrar ID generado al cliente antes de enviar
+    // Mostrar ID generado al cliente
     alert(`Pedido enviado con éxito. Tu ID de pedido es: ${orderDetails.id}`);
 
     // Enviar datos al Apps Script
@@ -369,20 +342,16 @@ function submitOrder(event) {
     })
     .then(response => response.json())
     .then(result => {
-        if (result.success) {
-            console.log("Pedido guardado correctamente.");
-        } else {
-            console.error("Error en el Apps Script:", result.error);
-            alert("Hubo un problema al guardar tu pedido. Por favor intenta nuevamente.");
+        if (!result.success) {
+            alert("Hubo un error al guardar tu pedido. Por favor intenta de nuevo.");
         }
     })
     .catch(error => {
-        console.error("Error al enviar el pedido:", error);
-        alert("Error de red al intentar enviar el pedido.");
+        console.error("Error:", error);
+        alert("Error de red al enviar el pedido.");
     });
 
-    // Cerrar el formulario
-    closeForm();
+    closeForm(); // Cierra el formulario después de enviar
 }
 
 
