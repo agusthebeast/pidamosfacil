@@ -273,30 +273,6 @@ function generateUniqueID() {
     return `PF-${timestamp}`; // Prefijo para identificar el sistema
 }
 
-function sendOrderToGoogleSheet(orderDetails) {
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzyz_idtnfG3UooISzUeeZ19RXHQetVHxTwWPIZ5Tr887gbtcBc80Zt8UnSQxnqoINk/exec";
-
-    fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify(orderDetails),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            alert("Pedido enviado exitosamente.");
-        } else {
-            alert("Error al enviar el pedido. Intenta nuevamente.");
-        }
-    })
-    .catch(error => {
-        console.error("Error al enviar el pedido:", error);
-        alert("Error de red al enviar el pedido.");
-    });
-}
-
 // Llamar a la función con los datos del pedido
 document.querySelector("#enviarPedido").addEventListener("click", () => {
     const orderDetails = {
