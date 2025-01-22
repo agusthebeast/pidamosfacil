@@ -342,13 +342,13 @@ document.querySelector("#enviarPedido").addEventListener("click", () => {
 });
 
 function submitOrder(event) {
-    event.preventDefault(); // Evita recargar la página al enviar
+    event.preventDefault(); // Evitar recargar la página
 
     const scriptURL = "https://script.google.com/macros/s/AKfycbw8IBRIJTFhb5kdUQ7Dd3w834rO6T7uuZovh1hRsLpnLWTqJ5oGj3hsydiNye1fNrih/exec";
 
     // Recolectar datos del formulario
     const orderDetails = {
-        id: Date.now().toString(), // Generar ID único basado en el tiempo
+        id: Date.now().toString(), // Generar un ID único
         name: document.getElementById("name").value,
         cuit: document.getElementById("cuit").value,
         address: document.getElementById("address").value,
@@ -356,7 +356,7 @@ function submitOrder(event) {
         fecha: new Date().toISOString()
     };
 
-    // Mostrar ID generado al cliente
+    // Mostrar ID generado al cliente antes de enviar
     alert(`Pedido enviado con éxito. Tu ID de pedido es: ${orderDetails.id}`);
 
     // Enviar datos al Apps Script
@@ -369,16 +369,20 @@ function submitOrder(event) {
     })
     .then(response => response.json())
     .then(result => {
-        if (!result.success) {
-            alert("Hubo un error al guardar tu pedido. Por favor intenta de nuevo.");
+        if (result.success) {
+            console.log("Pedido guardado correctamente.");
+        } else {
+            console.error("Error en el Apps Script:", result.error);
+            alert("Hubo un problema al guardar tu pedido. Por favor intenta nuevamente.");
         }
     })
     .catch(error => {
-        console.error("Error:", error);
-        alert("Error de red al enviar el pedido.");
+        console.error("Error al enviar el pedido:", error);
+        alert("Error de red al intentar enviar el pedido.");
     });
 
-    closeForm(); // Cierra el formulario después de enviar
+    // Cerrar el formulario
+    closeForm();
 }
 
 
