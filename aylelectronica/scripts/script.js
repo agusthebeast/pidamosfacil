@@ -268,5 +268,37 @@ function clearSearch() {
     renderProducts("Todos", "Todos", products); // Mostrar todos los productos
 }
 
+function generateUniqueID() {
+    const timestamp = Date.now(); // Obtén la marca de tiempo actual
+    return `PF-${timestamp}`; // Prefijo para identificar el sistema
+}
+
+function submitOrder() {
+    const id = generateUniqueID(); // Genera un ID único
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const items = JSON.stringify(cart); // Carrito en formato JSON
+
+    // Datos para enviar a Google Sheets
+    const orderData = {
+        id: id,
+        nombre: name,
+        correo: email,
+        pedido: items
+    };
+
+    fetch("URL_DE_TU_SCRIPT_DE_GOOGLE_APPS", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.text())
+    .then(result => {
+        alert("Pedido enviado correctamente. ID: " + id);
+        window.open(`https://wa.me/5491138437425?text=Hola%20quería%20consultar%20sobre%20mi%20pedido.%20ID:%20${id}`, "_blank");
+    })
+    .catch(error => console.error("Error:", error));
+}
+
 
 fetchData();

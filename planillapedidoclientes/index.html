@@ -4,9 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planilla de Pedidos</title>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <h1>Planilla de Pedidos</h1>
-    <a href="https://pidamosfacil.com/get-orders" download>Descargar Planilla de Pedidos</a>
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="../assets/logo.png" alt="Pidamos Fácil Logo">
+            <span class="site-name">Pidamos Fácil</span>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="#planilla">Planilla</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="planilla">
+        <h1>Planilla de Pedidos de Clientes</h1>
+        <button onclick="downloadSheet()">Descargar Planilla</button>
+        <iframe 
+            src="https://docs.google.com/spreadsheets/d/TU_SHEET_ID/preview" 
+            width="100%" height="600px"></iframe>
+    </section>
+
+    <script>
+        function downloadSheet() {
+            window.open("https://docs.google.com/spreadsheets/d/TU_SHEET_ID/export?format=xlsx", "_blank");
+        }
+    </script>
 </body>
 </html>
