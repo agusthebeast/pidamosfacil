@@ -342,46 +342,43 @@ document.querySelector("#enviarPedido").addEventListener("click", () => {
 });
 
 function submitOrder(event) {
-    event.preventDefault(); // Evita que el formulario recargue la página
+    event.preventDefault(); // Evita recargar la página al enviar
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzyz_idtnfG3UooISzUeeZ19RXHQetVHxTwWPIZ5Tr887gbtcBc80Zt8UnSQxnqoINk/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbw8IBRIJTFhb5kdUQ7Dd3w834rO6T7uuZovh1hRsLpnLWTqJ5oGj3hsydiNye1fNrih/exec";
 
     // Recolectar datos del formulario
     const orderDetails = {
-        id: Date.now().toString(), // Genera un ID único basado en la fecha y hora
+        id: Date.now().toString(), // Generar ID único basado en el tiempo
         name: document.getElementById("name").value,
         cuit: document.getElementById("cuit").value,
         address: document.getElementById("address").value,
         email: document.getElementById("email").value,
-        fecha: new Date().toISOString(),
+        fecha: new Date().toISOString()
     };
 
-    // Enviar los datos al Apps Script
+    // Mostrar ID generado al cliente
+    alert(`Pedido enviado con éxito. Tu ID de pedido es: ${orderDetails.id}`);
+
+    // Enviar datos al Apps Script
     fetch(scriptURL, {
         method: "POST",
         body: JSON.stringify(orderDetails),
         headers: {
-            "Content-Type": "application/json",
-        },
+            "Content-Type": "application/json"
+        }
     })
     .then(response => response.json())
     .then(result => {
-        if (result.success) {
-            // Generar el mensaje para WhatsApp con el ID
-            const whatsappMessage = `Hola, quería consultar sobre mi pedido. ID: ${orderDetails.id}`;
-            const whatsappURL = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
-
-            alert("Pedido enviado exitosamente.");
-            window.open(whatsappURL, "_blank"); // Abrir WhatsApp con el mensaje generado
-            closeForm(); // Cierra el formulario
-        } else {
-            alert("Error al enviar el pedido. Intenta nuevamente.");
+        if (!result.success) {
+            alert("Hubo un error al guardar tu pedido. Por favor intenta de nuevo.");
         }
     })
     .catch(error => {
-        console.error("Error al enviar el pedido:", error);
+        console.error("Error:", error);
         alert("Error de red al enviar el pedido.");
     });
+
+    closeForm(); // Cierra el formulario después de enviar
 }
 
 
