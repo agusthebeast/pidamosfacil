@@ -1,11 +1,15 @@
 let currentUser = null;
+let currentRole = "CLIENTE";
 let products = [];
-let filteredProducts = [];
 let categories = [];
-let selectedCategory = "TODOS";
+let banners = [];
+let filteredProducts = [];
+let selectedCategory = null;
 let cart = [];
 let pedidosAdmin = [];
 let userOrders = [];
+let bannerIndex = 0;
+let bannerInterval = null;
 
 const loginScreen = document.getElementById("login-screen");
 const catalogScreen = document.getElementById("catalog-screen");
@@ -21,10 +25,17 @@ const logoutBtn = document.getElementById("logout-btn");
 const adminBtn = document.getElementById("admin-btn");
 const ordersBtn = document.getElementById("orders-btn");
 
-const categoriesEl = document.getElementById("categories");
+const heroBanners = document.getElementById("hero-banners");
+const heroTrack = document.getElementById("hero-track");
+const searchInput = document.getElementById("search-input");
+
+const categoryView = document.getElementById("category-view");
+const productsView = document.getElementById("products-view");
+const currentCategoryTitle = document.getElementById("current-category-title");
+const backToCategoriesBtn = document.getElementById("back-to-categories-btn");
+
 const productsListEl = document.getElementById("products-list");
 const cartCountEl = document.getElementById("cart-count");
-const searchInput = document.getElementById("search-input");
 const openCartBtn = document.getElementById("open-cart-btn");
 const backToShopBtn = document.getElementById("back-to-shop-btn");
 
@@ -73,15 +84,25 @@ loginForm.addEventListener("submit", async (e) => {
     const res = await fetch(apiUrl("login", { usuario, password }));
     const data = await res.json();
 
-    if (data.ok) {
-      currentUser = usuario;
-      welcomeUser.textContent = `Hola, ${usuario}`;
-      loginMsg.textContent = "";
-      await loadProducts();
-      showScreen(catalogScreen);
-    } else {
+    if (!data.ok) {
       loginMsg.textContent = data.message || "Usuario o contraseña incorrectos.";
+      return;
     }
+
+    currentUser = usuario;
+    currentRole = data.rol || "CLIENTE";
+    welcomeUser.textContent = `Hola, ${usuario}`;
+
+    if (currentRole === "ADMIN") {
+      adminBtn.classList.remove("hidden");
+    } else {
+      adminBtn.classList.add("hidden");
+    }
+
+    loginMsg.textContent = "";
+    await loadInitialData();
+    showCategories();
+    showScreen(catalogScreen);
   } catch {
     loginMsg.textContent = "No se pudo conectar con el servidor.";
   }
@@ -89,34 +110,17 @@ loginForm.addEventListener("submit", async (e) => {
 
 logoutBtn.addEventListener("click", () => {
   currentUser = null;
+  currentRole = "CLIENTE";
   cart = [];
   pedidosAdmin = [];
   userOrders = [];
-  selectedCategory = "TODOS";
+  selectedCategory = null;
   updateCartCount();
   loginForm.reset();
   checkoutForm.reset();
+  adminBtn.classList.add("hidden");
+  stopBannerCarousel();
   showScreen(loginScreen);
-});
-
-searchInput.addEventListener("input", renderProducts);
-
-openCartBtn.addEventListener("click", () => {
-  renderCart();
-  showScreen(cartScreen);
-});
-
-backToShopBtn.addEventListener("click", () => {
-  showScreen(catalogScreen);
-});
-
-newOrderBtn.addEventListener("click", async () => {
-  cart = [];
-  updateCartCount();
-  checkoutForm.reset();
-  checkoutMsg.textContent = "";
-  await loadProducts();
-  showScreen(catalogScreen);
 });
 
 ordersBtn.addEventListener("click", async () => {
@@ -137,30 +141,128 @@ backFromOrdersBtn.addEventListener("click", () => {
   showScreen(catalogScreen);
 });
 
+backToShopBtn.addEventListener("click", () => {
+  showScreen(catalogScreen);
+});
+
+openCartBtn.addEventListener("click", () => {
+  renderCart();
+  showScreen(cartScreen);
+});
+
+newOrderBtn.addEventListener("click", async () => {
+  cart = [];
+  updateCartCount();
+  checkoutForm.reset();
+  checkoutMsg.textContent = "";
+  await loadInitialData();
+  showCategories();
+  showScreen(catalogScreen);
+});
+
+backToCategoriesBtn.addEventListener("click", () => {
+  showCategories();
+});
+
+searchInput.addEventListener("input", () => {
+  if (selectedCategory) renderProducts();
+});
+
 adminSearchInput.addEventListener("input", renderPedidosAdmin);
 
-async function loadProducts() {
-  const res = await fetch(apiUrl("productos"));
-  const data = await res.json();
-  products = data.productos || [];
-  categories = ["TODOS", ...new Set(products.map(p => p.categoria).filter(Boolean))];
+async function loadInitialData() {
+  const [prodRes, catRes, bannerRes] = await Promise.all([
+    fetch(apiUrl("productos")),
+    fetch(apiUrl("categorias")),
+    fetch(apiUrl("banners"))
+  ]);
+
+  const prodData = await prodRes.json();
+  const catData = await catRes.json();
+  const bannerData = await bannerRes.json();
+
+  products = prodData.productos || [];
+  categories = catData.categorias || [];
+  banners = bannerData.banners || [];
+
+  renderHeroBanners();
   renderCategories();
-  renderProducts();
+}
+
+function renderHeroBanners() {
+  heroTrack.innerHTML = "";
+  stopBannerCarousel();
+
+  if (!banners.length) {
+    heroBanners.classList.add("hidden");
+    return;
+  }
+
+  heroBanners.classList.remove("hidden");
+
+  banners.forEach(banner => {
+    const slide = document.createElement("div");
+    slide.className = "hero-slide";
+    slide.innerHTML = `<img src="${banner.imagen}" alt="${banner.titulo || 'Banner'}" onerror="this.style.display='none';">`;
+    heroTrack.appendChild(slide);
+  });
+
+  bannerIndex = 0;
+  updateBannerPosition();
+
+  if (banners.length > 1) {
+    bannerInterval = setInterval(() => {
+      bannerIndex = (bannerIndex + 1) % banners.length;
+      updateBannerPosition();
+    }, 3000);
+  }
+}
+
+function updateBannerPosition() {
+  heroTrack.style.transform = `translateX(-${bannerIndex * 100}%)`;
+}
+
+function stopBannerCarousel() {
+  if (bannerInterval) {
+    clearInterval(bannerInterval);
+    bannerInterval = null;
+  }
 }
 
 function renderCategories() {
-  categoriesEl.innerHTML = "";
-  categories.forEach(cat => {
+  categoryView.innerHTML = "";
+
+  if (!categories.length) {
+    categoryView.innerHTML = `<div class="login-card"><p>No hay categorías cargadas.</p></div>`;
+    return;
+  }
+
+  categories.forEach(category => {
     const btn = document.createElement("button");
-    btn.className = `category-chip ${selectedCategory === cat ? "active" : ""}`;
-    btn.textContent = cat;
-    btn.onclick = () => {
-      selectedCategory = cat;
-      renderCategories();
-      renderProducts();
-    };
-    categoriesEl.appendChild(btn);
+    btn.className = "category-banner";
+    btn.innerHTML = `
+      <img src="${category.imagen || ''}" alt="${category.nombre}" onerror="this.style.display='none';" />
+      <div class="overlay">
+        <h3>${category.nombre}</h3>
+      </div>
+    `;
+    btn.onclick = () => openCategory(category.nombre);
+    categoryView.appendChild(btn);
   });
+}
+
+function showCategories() {
+  selectedCategory = null;
+  categoryView.classList.remove("hidden");
+  productsView.classList.add("hidden");
+}
+
+function openCategory(categoryName) {
+  selectedCategory = categoryName;
+  currentCategoryTitle.textContent = categoryName;
+  categoryView.classList.add("hidden");
+  productsView.classList.remove("hidden");
+  renderProducts();
 }
 
 function getCartQty(productId) {
@@ -193,18 +295,18 @@ function renderProducts() {
   const q = searchInput.value.trim().toLowerCase();
 
   filteredProducts = products.filter(p => {
-    const matchesCategory = selectedCategory === "TODOS" || p.categoria === selectedCategory;
+    const sameCategory = p.categoria === selectedCategory;
     const matchesText =
       (p.nombre || "").toLowerCase().includes(q) ||
       (p.descripcion || "").toLowerCase().includes(q) ||
       (p.categoria || "").toLowerCase().includes(q);
-    return matchesCategory && matchesText;
+    return sameCategory && matchesText;
   });
 
   productsListEl.innerHTML = "";
 
   if (!filteredProducts.length) {
-    productsListEl.innerHTML = `<div class="login-card"><p>No hay productos para mostrar.</p></div>`;
+    productsListEl.innerHTML = `<div class="login-card"><p>No hay productos en esta categoría.</p></div>`;
     return;
   }
 
@@ -456,9 +558,7 @@ function renderPedidosAdmin() {
         codigo: pedido.codigo,
         estado: nuevoEstado
       });
-      if (result.ok) {
-        await loadPedidosAdmin();
-      }
+      if (result.ok) await loadPedidosAdmin();
     };
 
     card.querySelector(".copy-btn").onclick = async () => {

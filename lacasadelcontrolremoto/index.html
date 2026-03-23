@@ -37,23 +37,34 @@
         </div>
         <div class="top-actions">
           <button id="orders-btn" class="ghost-btn">Pedidos</button>
-          <button id="admin-btn" class="ghost-btn">Admin</button>
+          <button id="admin-btn" class="ghost-btn hidden">Admin</button>
           <button id="logout-btn" class="ghost-btn">Salir</button>
         </div>
       </header>
+
+      <div id="hero-banners" class="hero-banners hidden">
+        <div id="hero-track" class="hero-track"></div>
+      </div>
 
       <div class="search-wrap">
         <input type="text" id="search-input" placeholder="Buscar producto..." />
       </div>
 
-      <div id="categories" class="categories"></div>
+      <div id="category-view" class="category-view"></div>
 
-      <div class="cart-bar">
-        <span id="cart-count">0 unidades</span>
-        <button id="open-cart-btn">Ver carrito</button>
+      <div id="products-view" class="products-view hidden">
+        <div class="section-head">
+          <button id="back-to-categories-btn" class="ghost-btn">← Volver a categorías</button>
+          <h3 id="current-category-title"></h3>
+        </div>
+
+        <div class="cart-bar">
+          <span id="cart-count">0 unidades</span>
+          <button id="open-cart-btn">Ver carrito</button>
+        </div>
+
+        <div id="products-list" class="products-list"></div>
       </div>
-
-      <div id="products-list" class="products-list"></div>
     </section>
 
     <section id="cart-screen" class="screen">
@@ -97,7 +108,6 @@
         <h2>Mis pedidos</h2>
         <button id="back-from-orders-btn" class="ghost-btn">Volver</button>
       </header>
-
       <div id="user-orders-list" class="admin-orders-list"></div>
     </section>
 
@@ -108,7 +118,7 @@
       </header>
 
       <div class="search-wrap">
-        <input type="text" id="admin-search-input" placeholder="Buscar por código o cliente..." />
+        <input type="text" id="admin-search-input" placeholder="Buscar por código, cliente o usuario..." />
       </div>
 
       <div id="admin-orders-list" class="admin-orders-list"></div>
