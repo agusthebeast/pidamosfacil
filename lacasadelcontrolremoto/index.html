@@ -14,9 +14,9 @@
     <section id="login-screen" class="screen active">
       <div class="login-card">
         <div class="brand">
-          <div class="brand-logo">📺</div>
+          <div class="brand-logo">🎛️</div>
           <h1>La casa del control remoto</h1>
-          <p>Sistema exclusivo para clientes mayoristas registrados</p>
+          <p>Sistema exclusivo para clientes mayoristas</p>
         </div>
 
         <form id="login-form">
@@ -35,7 +35,10 @@
           <h2>La casa del control remoto</h2>
           <p id="welcome-user"></p>
         </div>
-        <button id="logout-btn" class="ghost-btn">Salir</button>
+        <div class="top-actions">
+          <button id="admin-btn" class="ghost-btn">Pedidos</button>
+          <button id="logout-btn" class="ghost-btn">Salir</button>
+        </div>
       </header>
 
       <div class="search-wrap">
@@ -86,6 +89,19 @@
         <a id="wa-link" class="wa-btn" target="_blank">Consultar por WhatsApp</a>
         <button id="new-order-btn" class="primary-btn">Hacer otro pedido</button>
       </div>
+    </section>
+
+    <section id="admin-screen" class="screen">
+      <header class="topbar">
+        <h2>Administración de pedidos</h2>
+        <button id="back-from-admin-btn" class="ghost-btn">Volver</button>
+      </header>
+
+      <div class="search-wrap">
+        <input type="text" id="admin-search-input" placeholder="Buscar por código o cliente..." />
+      </div>
+
+      <div id="admin-orders-list" class="admin-orders-list"></div>
     </section>
   </div>
 

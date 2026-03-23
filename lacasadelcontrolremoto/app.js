@@ -4,16 +4,19 @@ let filteredProducts = [];
 let categories = [];
 let selectedCategory = "TODOS";
 let cart = [];
+let pedidosAdmin = [];
 
 const loginScreen = document.getElementById("login-screen");
 const catalogScreen = document.getElementById("catalog-screen");
 const cartScreen = document.getElementById("cart-screen");
 const successScreen = document.getElementById("success-screen");
+const adminScreen = document.getElementById("admin-screen");
 
 const loginForm = document.getElementById("login-form");
 const loginMsg = document.getElementById("login-msg");
 const welcomeUser = document.getElementById("welcome-user");
 const logoutBtn = document.getElementById("logout-btn");
+const adminBtn = document.getElementById("admin-btn");
 
 const categoriesEl = document.getElementById("categories");
 const productsListEl = document.getElementById("products-list");
@@ -30,8 +33,12 @@ const orderCodeEl = document.getElementById("order-code");
 const waLinkEl = document.getElementById("wa-link");
 const newOrderBtn = document.getElementById("new-order-btn");
 
+const backFromAdminBtn = document.getElementById("back-from-admin-btn");
+const adminOrdersList = document.getElementById("admin-orders-list");
+const adminSearchInput = document.getElementById("admin-search-input");
+
 function showScreen(screen) {
-  [loginScreen, catalogScreen, cartScreen, successScreen].forEach(s => s.classList.remove("active"));
+  [loginScreen, catalogScreen, cartScreen, successScreen, adminScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
 }
 
@@ -69,7 +76,7 @@ loginForm.addEventListener("submit", async (e) => {
     } else {
       loginMsg.textContent = data.message || "Usuario o contraseña incorrectos.";
     }
-  } catch (err) {
+  } catch {
     loginMsg.textContent = "No se pudo conectar con el servidor.";
   }
 });
@@ -102,11 +109,21 @@ newOrderBtn.addEventListener("click", async () => {
   showScreen(catalogScreen);
 });
 
+adminBtn.addEventListener("click", async () => {
+  await loadPedidosAdmin();
+  showScreen(adminScreen);
+});
+
+backFromAdminBtn.addEventListener("click", () => {
+  showScreen(catalogScreen);
+});
+
+adminSearchInput.addEventListener("input", renderPedidosAdmin);
+
 async function loadProducts() {
   const res = await fetch(apiUrl("productos"));
   const data = await res.json();
   products = data.productos || [];
-  filteredProducts = [...products];
   categories = ["TODOS", ...new Set(products.map(p => p.categoria).filter(Boolean))];
   renderCategories();
   renderProducts();
@@ -127,13 +144,39 @@ function renderCategories() {
   });
 }
 
+function getCartQty(productId) {
+  const item = cart.find(x => String(x.id) === String(productId));
+  return item ? item.cantidad : 0;
+}
+
+function setCartQty(product, quantity) {
+  const qty = Math.max(0, parseInt(quantity, 10) || 0);
+  const existing = cart.find(item => String(item.id) === String(product.id));
+
+  if (qty === 0) {
+    cart = cart.filter(item => String(item.id) !== String(product.id));
+  } else if (existing) {
+    existing.cantidad = qty;
+  } else {
+    cart.push({
+      id: product.id,
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      imagen: product.imagen,
+      cantidad: qty
+    });
+  }
+
+  updateCartCount();
+}
+
 function renderProducts() {
   const q = searchInput.value.trim().toLowerCase();
 
   filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === "TODOS" || p.categoria === selectedCategory;
     const matchesText =
-      p.nombre.toLowerCase().includes(q) ||
+      (p.nombre || "").toLowerCase().includes(q) ||
       (p.descripcion || "").toLowerCase().includes(q) ||
       (p.categoria || "").toLowerCase().includes(q);
     return matchesCategory && matchesText;
@@ -147,6 +190,8 @@ function renderProducts() {
   }
 
   filteredProducts.forEach(product => {
+    const currentQty = getCartQty(product.id);
+
     const card = document.createElement("div");
     card.className = "product-card";
 
@@ -158,51 +203,35 @@ function renderProducts() {
         <div class="qty-row">
           <div class="qty-box">
             <button type="button" class="minus-btn">-</button>
-            <span class="qty-number">1</span>
+            <input type="number" min="0" value="${currentQty}" class="qty-input" />
             <button type="button" class="plus-btn">+</button>
           </div>
-          <button type="button" class="add-btn">Agregar</button>
         </div>
       </div>
     `;
 
-    const qtyNumber = card.querySelector(".qty-number");
-    let qty = 1;
+    const input = card.querySelector(".qty-input");
+    const minusBtn = card.querySelector(".minus-btn");
+    const plusBtn = card.querySelector(".plus-btn");
 
-    card.querySelector(".minus-btn").onclick = () => {
-      if (qty > 1) qty--;
-      qtyNumber.textContent = qty;
+    minusBtn.onclick = () => {
+      const newQty = Math.max(0, (parseInt(input.value, 10) || 0) - 1);
+      input.value = newQty;
+      setCartQty(product, newQty);
     };
 
-    card.querySelector(".plus-btn").onclick = () => {
-      qty++;
-      qtyNumber.textContent = qty;
+    plusBtn.onclick = () => {
+      const newQty = (parseInt(input.value, 10) || 0) + 1;
+      input.value = newQty;
+      setCartQty(product, newQty);
     };
 
-    card.querySelector(".add-btn").onclick = () => {
-      addToCart(product, qty);
-      qty = 1;
-      qtyNumber.textContent = qty;
-    };
+    input.addEventListener("input", () => {
+      setCartQty(product, input.value);
+    });
 
     productsListEl.appendChild(card);
   });
-}
-
-function addToCart(product, quantity) {
-  const existing = cart.find(item => item.id === product.id);
-  if (existing) {
-    existing.cantidad += quantity;
-  } else {
-    cart.push({
-      id: product.id,
-      nombre: product.nombre,
-      descripcion: product.descripcion,
-      imagen: product.imagen,
-      cantidad: quantity
-    });
-  }
-  updateCartCount();
 }
 
 function updateCartCount() {
@@ -230,7 +259,7 @@ function renderCart() {
         <div class="qty-row">
           <div class="qty-box">
             <button type="button" class="minus-btn">-</button>
-            <span class="qty-number">${item.cantidad}</span>
+            <input type="number" min="0" value="${item.cantidad}" class="qty-input" />
             <button type="button" class="plus-btn">+</button>
           </div>
           <button type="button" class="remove-btn">Quitar</button>
@@ -238,26 +267,34 @@ function renderCart() {
       </div>
     `;
 
+    const input = row.querySelector(".qty-input");
+
     row.querySelector(".minus-btn").onclick = () => {
-      if (item.cantidad > 1) {
-        item.cantidad--;
-      } else {
-        cart = cart.filter(c => c.id !== item.id);
-      }
-      updateCartCount();
+      const newQty = Math.max(0, (parseInt(input.value, 10) || 0) - 1);
+      input.value = newQty;
+      setCartQty(item, newQty);
       renderCart();
+      renderProducts();
     };
 
     row.querySelector(".plus-btn").onclick = () => {
-      item.cantidad++;
-      updateCartCount();
+      const newQty = (parseInt(input.value, 10) || 0) + 1;
+      input.value = newQty;
+      setCartQty(item, newQty);
       renderCart();
+      renderProducts();
     };
 
-    row.querySelector(".remove-btn").onclick = () => {
-      cart = cart.filter(c => c.id !== item.id);
-      updateCartCount();
+    input.addEventListener("input", () => {
+      setCartQty(item, input.value);
       renderCart();
+      renderProducts();
+    });
+
+    row.querySelector(".remove-btn").onclick = () => {
+      setCartQty(item, 0);
+      renderCart();
+      renderProducts();
     };
 
     cartItemsEl.appendChild(row);
@@ -296,7 +333,84 @@ checkoutForm.addEventListener("submit", async (e) => {
     orderCodeEl.textContent = data.codigo;
     waLinkEl.href = data.whatsappUrl;
     showScreen(successScreen);
-  } catch (err) {
+  } catch {
     checkoutMsg.textContent = "Error de conexión al guardar el pedido.";
   }
 });
+
+async function loadPedidosAdmin() {
+  const res = await fetch(apiUrl("pedidos"));
+  const data = await res.json();
+  pedidosAdmin = data.pedidos || [];
+  renderPedidosAdmin();
+}
+
+function renderPedidosAdmin() {
+  const q = adminSearchInput.value.trim().toLowerCase();
+  adminOrdersList.innerHTML = "";
+
+  const filtrados = pedidosAdmin.filter(p =>
+    (p.codigo || "").toLowerCase().includes(q) ||
+    (p.cliente || "").toLowerCase().includes(q)
+  );
+
+  if (!filtrados.length) {
+    adminOrdersList.innerHTML = `<div class="login-card"><p>No hay pedidos para mostrar.</p></div>`;
+    return;
+  }
+
+  filtrados.forEach(pedido => {
+    const card = document.createElement("div");
+    card.className = "admin-card";
+
+    card.innerHTML = `
+      <h3>${pedido.codigo}</h3>
+      <div class="admin-meta">
+        <strong>Cliente:</strong> ${pedido.cliente}<br>
+        <strong>Tel:</strong> ${pedido.telefono}<br>
+        <strong>Dirección:</strong> ${pedido.direccion}<br>
+        <strong>Pago:</strong> ${pedido.pago}<br>
+        <strong>Fecha:</strong> ${pedido.fecha} ${pedido.hora}<br>
+        <strong>Estado:</strong> ${pedido.estado}
+      </div>
+      <div class="admin-products">
+        <strong>Productos:</strong><br>
+        ${pedido.detalleHtml}
+      </div>
+      <div class="admin-actions">
+        <select class="estado-select">
+          <option ${pedido.estado === "Recibido" ? "selected" : ""}>Recibido</option>
+          <option ${pedido.estado === "Confirmado" ? "selected" : ""}>Confirmado</option>
+          <option ${pedido.estado === "Preparando" ? "selected" : ""}>Preparando</option>
+          <option ${pedido.estado === "Listo" ? "selected" : ""}>Listo</option>
+          <option ${pedido.estado === "Entregado" ? "selected" : ""}>Entregado</option>
+        </select>
+        <button class="update-btn">Guardar estado</button>
+        <button class="copy-btn">Copiar facturación</button>
+      </div>
+    `;
+
+    card.querySelector(".update-btn").onclick = async () => {
+      const nuevoEstado = card.querySelector(".estado-select").value;
+      const result = await apiPost({
+        action: "actualizarEstado",
+        codigo: pedido.codigo,
+        estado: nuevoEstado
+      });
+      if (result.ok) {
+        await loadPedidosAdmin();
+      }
+    };
+
+    card.querySelector(".copy-btn").onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(pedido.datosFactura || "");
+        alert("Datos copiados.");
+      } catch {
+        alert("No se pudo copiar.");
+      }
+    };
+
+    adminOrdersList.appendChild(card);
+  });
+}
