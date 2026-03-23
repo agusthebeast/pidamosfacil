@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La casa del control remoto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <section id="login-screen" class="screen active">
+      <div class="login-card">
+        <div class="brand">
+          <div class="brand-logo">📺</div>
+          <h1>La casa del control remoto</h1>
+          <p>Sistema exclusivo para clientes mayoristas registrados</p>
+        </div>
+
+        <form id="login-form">
+          <input type="text" id="usuario" placeholder="Usuario" required />
+          <input type="password" id="password" placeholder="Contraseña" required />
+          <button type="submit">Ingresar</button>
+        </form>
+
+        <p id="login-msg" class="msg"></p>
+      </div>
+    </section>
+
+    <section id="catalog-screen" class="screen">
+      <header class="topbar">
+        <div class="title-wrap">
+          <h2>La casa del control remoto</h2>
+          <p id="welcome-user"></p>
+        </div>
+        <button id="logout-btn" class="ghost-btn">Salir</button>
+      </header>
+
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Buscar producto..." />
+      </div>
+
+      <div id="categories" class="categories"></div>
+
+      <div class="cart-bar">
+        <span id="cart-count">0 unidades</span>
+        <button id="open-cart-btn">Ver carrito</button>
+      </div>
+
+      <div id="products-list" class="products-list"></div>
+    </section>
+
+    <section id="cart-screen" class="screen">
+      <header class="topbar">
+        <h2>Tu carrito</h2>
+        <button id="back-to-shop-btn" class="ghost-btn">Volver</button>
+      </header>
+
+      <div id="cart-items" class="cart-items"></div>
+
+      <div class="checkout-card">
+        <h3>Completar pedido</h3>
+        <form id="checkout-form">
+          <input type="text" id="cliente" placeholder="Nombre y apellido" required />
+          <input type="text" id="telefono" placeholder="Teléfono" required />
+          <input type="text" id="direccion" placeholder="Dirección" required />
+          <select id="pago" required>
+            <option value="">Método de pago</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Efectivo">Efectivo</option>
+          </select>
+          <button type="submit" id="send-order-btn">Enviar pedido</button>
+        </form>
+        <p id="checkout-msg" class="msg"></p>
+      </div>
+    </section>
+
+    <section id="success-screen" class="screen">
+      <div class="success-card">
+        <h2>Pedido recibido</h2>
+        <p>Tu código de seguimiento es:</p>
+        <div id="order-code" class="order-code"></div>
+        <p>Guardá este código para consultar el estado de tu pedido.</p>
+        <a id="wa-link" class="wa-btn" target="_blank">Consultar por WhatsApp</a>
+        <button id="new-order-btn" class="primary-btn">Hacer otro pedido</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWnL1775DErZPMM8VxScbSJ3t4GBNhi0oyytAepjtkllcQ1u_-AALyPOEt9IZzAwM7/exec";
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
