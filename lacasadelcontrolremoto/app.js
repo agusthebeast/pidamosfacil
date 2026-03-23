@@ -5,18 +5,21 @@ let categories = [];
 let selectedCategory = "TODOS";
 let cart = [];
 let pedidosAdmin = [];
+let userOrders = [];
 
 const loginScreen = document.getElementById("login-screen");
 const catalogScreen = document.getElementById("catalog-screen");
 const cartScreen = document.getElementById("cart-screen");
 const successScreen = document.getElementById("success-screen");
 const adminScreen = document.getElementById("admin-screen");
+const ordersScreen = document.getElementById("orders-screen");
 
 const loginForm = document.getElementById("login-form");
 const loginMsg = document.getElementById("login-msg");
 const welcomeUser = document.getElementById("welcome-user");
 const logoutBtn = document.getElementById("logout-btn");
 const adminBtn = document.getElementById("admin-btn");
+const ordersBtn = document.getElementById("orders-btn");
 
 const categoriesEl = document.getElementById("categories");
 const productsListEl = document.getElementById("products-list");
@@ -37,8 +40,11 @@ const backFromAdminBtn = document.getElementById("back-from-admin-btn");
 const adminOrdersList = document.getElementById("admin-orders-list");
 const adminSearchInput = document.getElementById("admin-search-input");
 
+const backFromOrdersBtn = document.getElementById("back-from-orders-btn");
+const userOrdersList = document.getElementById("user-orders-list");
+
 function showScreen(screen) {
-  [loginScreen, catalogScreen, cartScreen, successScreen, adminScreen].forEach(s => s.classList.remove("active"));
+  [loginScreen, catalogScreen, cartScreen, successScreen, adminScreen, ordersScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
 }
 
@@ -84,8 +90,12 @@ loginForm.addEventListener("submit", async (e) => {
 logoutBtn.addEventListener("click", () => {
   currentUser = null;
   cart = [];
+  pedidosAdmin = [];
+  userOrders = [];
+  selectedCategory = "TODOS";
   updateCartCount();
   loginForm.reset();
+  checkoutForm.reset();
   showScreen(loginScreen);
 });
 
@@ -109,12 +119,21 @@ newOrderBtn.addEventListener("click", async () => {
   showScreen(catalogScreen);
 });
 
+ordersBtn.addEventListener("click", async () => {
+  await loadUserOrders();
+  showScreen(ordersScreen);
+});
+
 adminBtn.addEventListener("click", async () => {
   await loadPedidosAdmin();
   showScreen(adminScreen);
 });
 
 backFromAdminBtn.addEventListener("click", () => {
+  showScreen(catalogScreen);
+});
+
+backFromOrdersBtn.addEventListener("click", () => {
   showScreen(catalogScreen);
 });
 
@@ -338,6 +357,43 @@ checkoutForm.addEventListener("submit", async (e) => {
   }
 });
 
+async function loadUserOrders() {
+  const res = await fetch(apiUrl("pedidosUsuario", { usuario: currentUser }));
+  const data = await res.json();
+  userOrders = data.pedidos || [];
+  renderUserOrders();
+}
+
+function renderUserOrders() {
+  userOrdersList.innerHTML = "";
+
+  if (!userOrders.length) {
+    userOrdersList.innerHTML = `<div class="login-card"><p>Todavía no hiciste pedidos.</p></div>`;
+    return;
+  }
+
+  userOrders.forEach(pedido => {
+    const card = document.createElement("div");
+    card.className = "admin-card";
+
+    card.innerHTML = `
+      <h3>${pedido.codigo}</h3>
+      <div class="admin-meta">
+        <strong>Fecha:</strong> ${pedido.fecha} ${pedido.hora}<br>
+        <strong>Cliente:</strong> ${pedido.cliente}<br>
+        <strong>Pago:</strong> ${pedido.pago}
+      </div>
+      <div class="admin-products">
+        <strong>Productos:</strong><br>
+        ${pedido.detalleHtml}
+      </div>
+      <div class="status-badge">${pedido.estado}</div>
+    `;
+
+    userOrdersList.appendChild(card);
+  });
+}
+
 async function loadPedidosAdmin() {
   const res = await fetch(apiUrl("pedidos"));
   const data = await res.json();
@@ -351,7 +407,8 @@ function renderPedidosAdmin() {
 
   const filtrados = pedidosAdmin.filter(p =>
     (p.codigo || "").toLowerCase().includes(q) ||
-    (p.cliente || "").toLowerCase().includes(q)
+    (p.cliente || "").toLowerCase().includes(q) ||
+    (p.usuario || "").toLowerCase().includes(q)
   );
 
   if (!filtrados.length) {
@@ -366,6 +423,7 @@ function renderPedidosAdmin() {
     card.innerHTML = `
       <h3>${pedido.codigo}</h3>
       <div class="admin-meta">
+        <strong>Usuario:</strong> ${pedido.usuario}<br>
         <strong>Cliente:</strong> ${pedido.cliente}<br>
         <strong>Tel:</strong> ${pedido.telefono}<br>
         <strong>Dirección:</strong> ${pedido.direccion}<br>
@@ -387,6 +445,7 @@ function renderPedidosAdmin() {
         </select>
         <button class="update-btn">Guardar estado</button>
         <button class="copy-btn">Copiar facturación</button>
+        <span class="copy-ok"></span>
       </div>
     `;
 
@@ -403,12 +462,14 @@ function renderPedidosAdmin() {
     };
 
     card.querySelector(".copy-btn").onclick = async () => {
+      const msg = card.querySelector(".copy-ok");
       try {
         await navigator.clipboard.writeText(pedido.datosFactura || "");
-        alert("Datos copiados.");
+        msg.textContent = "Copiado";
       } catch {
-        alert("No se pudo copiar.");
+        msg.textContent = "No se pudo copiar";
       }
+      setTimeout(() => msg.textContent = "", 2000);
     };
 
     adminOrdersList.appendChild(card);

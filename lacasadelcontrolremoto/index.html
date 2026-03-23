@@ -36,7 +36,8 @@
           <p id="welcome-user"></p>
         </div>
         <div class="top-actions">
-          <button id="admin-btn" class="ghost-btn">Pedidos</button>
+          <button id="orders-btn" class="ghost-btn">Pedidos</button>
+          <button id="admin-btn" class="ghost-btn">Admin</button>
           <button id="logout-btn" class="ghost-btn">Salir</button>
         </div>
       </header>
@@ -89,6 +90,15 @@
         <a id="wa-link" class="wa-btn" target="_blank">Consultar por WhatsApp</a>
         <button id="new-order-btn" class="primary-btn">Hacer otro pedido</button>
       </div>
+    </section>
+
+    <section id="orders-screen" class="screen">
+      <header class="topbar">
+        <h2>Mis pedidos</h2>
+        <button id="back-from-orders-btn" class="ghost-btn">Volver</button>
+      </header>
+
+      <div id="user-orders-list" class="admin-orders-list"></div>
     </section>
 
     <section id="admin-screen" class="screen">
